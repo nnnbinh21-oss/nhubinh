@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>听力练习</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f9f9f9; text-align: center; padding: 20px; }
+  h1 { color: #333; }
+  .question { margin: 20px 0; text-align: left; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  button { margin: 10px; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+  .submit { background-color: #4CAF50; color: white; }
+  .show-answers { background-color: #2196F3; color: white; }
+</style>
+</head>
+<body>
+  <h1>听力练习</h1>
+  <audio controls>
+    <source src="1.mp3" type="audio/mpeg">
+    您的浏览器不支持音频播放。
+  </audio>
+
+  <form id="quizForm">
+    <div class="question">
+      <p>1. 游客最开始问的是什么？</p>
+      <label><input type="radio" name="q1" value="A"> 去火车站怎么走</label><br>
+      <label><input type="radio" name="q1" value="B"> 去地铁站怎么走</label><br>
+      <label><input type="radio" name="q1" value="C"> 去机场怎么走</label><br>
+      <label><input type="radio" name="q1" value="D"> 去书店怎么走</label>
+    </div>
+
+    <div class="question">
+      <p>2. 从出发地到地铁站大概需要多久？</p>
+      <label><input type="radio" name="q2" value="A"> 五分钟</label><br>
+      <label><input type="radio" name="q2" value="B"> 十分钟</label><br>
+      <label><input type="radio" name="q2" value="C"> 十五分钟</label><br>
+      <label><input type="radio" name="q2" value="D"> 二十分钟</label>
+    </div>
+
+    <div class="question">
+      <p>3. 游客走到红绿灯那里应该做什么？</p>
+      <label><input type="radio" name="q3" value="A"> 左拐</label><br>
+      <label><input type="radio" name="q3" value="B"> 右拐</label><br>
+      <label><input type="radio" name="q3" value="C"> 过马路</label><br>
+      <label><input type="radio" name="q3" value="D"> 停下来</label>
+    </div>
+
+    <div class="question">
+      <p>4. 过了马路以后，游客应该怎么走？</p>
+      <label><input type="radio" name="q4" value="A"> 往前走十分钟</label><br>
+      <label><input type="radio" name="q4" value="B"> 往右拐再走五分钟</label><br>
+      <label><input type="radio" name="q4" value="C"> 往左拐再走十五分钟</label><br>
+      <label><input type="radio" name="q4" value="D"> 停下来等人</label>
+    </div>
+
+    <div class="question">
+      <p>5. 在去地铁站的路上，游客会看到哪些地方？</p>
+      <label><input type="radio" name="q5" value="A"> 银行和饭店</label><br>
+      <label><input type="radio" name="q5" value="B"> 超市和邮局</label><br>
+      <label><input type="radio" name="q5" value="C"> 书店和银行</label><br>
+      <label><input type="radio" name="q5" value="D"> 医院和学校</label>
+    </div>
+
+    <div class="question">
+      <p>6. 最后地铁站在哪里？</p>
+      <label><input type="radio" name="q6" value="A"> 在书店旁边</label><br>
+      <label><input type="radio" name="q6" value="B"> 在银行旁边</label><br>
+      <label><input type="radio" name="q6" value="C"> 在超市旁边</label><br>
+      <label><input type="radio" name="q6" value="D"> 在火车站旁边</label>
+    </div>
+
+    <button type="button" class="submit" onclick="submitQuiz()">提交答案</button>
+    <button type="button" class="show-answers" onclick="showAnswers()">显示正确答案</button>
+  </form>
+
+  <p id="result"></p>
+
+  <script>
+    const correctAnswers = { q1: "B", q2: "B", q3: "C", q4: "B", q5: "C", q6: "B" };
+
+    function submitQuiz() {
+      let score = 0;
+      let total = 6;
+      for (let q in correctAnswers) {
+        let answer = document.querySelector(`input[name="${q}"]:checked`);
+        if (answer && answer.value === correctAnswers[q]) {
+          score++;
+        }
+      }
+      document.getElementById("result").innerText = "你的得分是 " + score + " / " + total;
+    }
+
+    function showAnswers() {
+      let answersText = "正确答案：\n";
+      for (let q in correctAnswers) {
+        answersText += q + ": " + correctAnswers[q] + "\n";
+      }
+      alert(answersText);
+    }
+  </script>
+</body>
+</html>
