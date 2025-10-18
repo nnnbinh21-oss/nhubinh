@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工厂生词表 - 互动学习</title>
+<style>
+  body {
+    font-family: 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2em;
+    margin-bottom: 10px;
+  }
+  .search-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  input[type="text"] {
+    width: 80%;
+    max-width: 500px;
+    padding: 10px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    outline: none;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: 0.3s;
+  }
+  input[type="text"]:focus {
+    border-color: #7e57c2;
+    box-shadow: 0 0 10px rgba(126, 87, 194, 0.3);
+  }
+  .count {
+    text-align: center;
+    font-size: 1em;
+    color: #444;
+    margin-bottom: 20px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 10px;
+  }
+  .card {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+  .word {
+    font-size: 1.8em;
+    color: #222;
+    margin-bottom: 5px;
+  }
+  .pinyin {
+    color: #e53935;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+  }
+  .meaning {
+    color: #2e7d32;
+    font-size: 1em;
+    margin-bottom: 10px;
+  }
+  .example {
+    font-size: 0.95em;
+    color: #555;
+    line-height: 1.5;
+  }
+  .example .vi {
+    color: #388e3c;
+    display: block;
+    margin-top: 3px;
+  }
+  .sound-btn {
+    background: #9575cd;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s;
+  }
+  .sound-btn.playing {
+    background: #ff7043;
+  }
+  @media (max-width: 600px) {
+    h1 { font-size: 1.5em; }
+    .word { font-size: 1.4em; }
+  }
+</style>
+</head>
+<body>
+  <h1>工厂生词表</h1>
+  <div class="search-container">
+    <input type="text" id="search" placeholder="搜索生词、拼音、越南语或例句（Ctrl + /）..." />
+  </div>
+  <div class="count" id="count"></div>
+  <div class="grid" id="vocabGrid"></div>
+
+<script>
+const vocabList = [
+  { word: "工厂", pinyin: "gōng chǎng", meaning: "nhà máy", example: "我们在工厂工作。", example_vi: "Chúng tôi làm việc ở nhà máy." },
+  { word: "工人", pinyin: "gōng rén", meaning: "công nhân", example: "工人每天都很辛苦。", example_vi: "Công nhân mỗi ngày đều rất vất vả." },
+  { word: "机器", pinyin: "jī qì", meaning: "máy móc", example: "这台机器坏了。", example_vi: "Cái máy này bị hỏng rồi." },
+  { word: "生产", pinyin: "shēng chǎn", meaning: "sản xuất", example: "工厂在生产汽车。", example_vi: "Nhà máy đang sản xuất ô tô." },
+  { word: "材料", pinyin: "cái liào", meaning: "nguyên liệu", example: "这些材料很贵。", example_vi: "Những nguyên liệu này rất đắt." },
+  { word: "安全", pinyin: "ān quán", meaning: "an toàn", example: "工作时要注意安全。", example_vi: "Khi làm việc phải chú ý an toàn." },
+  { word: "检查", pinyin: "jiǎn chá", meaning: "kiểm tra", example: "经理正在检查机器。", example_vi: "Giám đốc đang kiểm tra máy móc." },
+  { word: "经理", pinyin: "jīng lǐ", meaning: "quản lý, giám đốc", example: "经理来了。", example_vi: "Giám đốc đã đến." },
+  { word: "上班", pinyin: "shàng bān", meaning: "đi làm", example: "我每天八点上班。", example_vi: "Tôi đi làm lúc tám giờ mỗi ngày." },
+  { word: "下班", pinyin: "xià bān", meaning: "tan làm", example: "我们五点下班。", example_vi: "Chúng tôi tan làm lúc năm giờ." },
+  { word: "工资", pinyin: "gōng zī", meaning: "tiền lương", example: "这个月的工资发了。", example_vi: "Tiền lương tháng này đã được phát." },
+  { word: "加班", pinyin: "jiā bān", meaning: "làm thêm giờ", example: "今天晚上要加班。", example_vi: "Tối nay phải làm thêm giờ." },
+  { word: "工人证", pinyin: "gōng rén zhèng", meaning: "thẻ công nhân", example: "请出示你的工人证。", example_vi: "Vui lòng xuất trình thẻ công nhân của bạn." },
+  { word: "工作服", pinyin: "gōng zuò fú", meaning: "đồng phục công nhân", example: "工厂要求穿工作服。", example_vi: "Nhà máy yêu cầu mặc đồng phục." },
+  { word: "车间", pinyin: "chē jiān", meaning: "phân xưởng", example: "他在车间工作。", example_vi: "Anh ấy làm việc ở phân xưởng." }
+];
+
+const grid = document.getElementById('vocabGrid');
+const count = document.getElementById('count');
+const searchInput = document.getElementById('search');
+
+function renderVocab(list) {
+  grid.innerHTML = '';
+  list.forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="word">${v.word}</div>
+      <div class="pinyin">${v.pinyin}</div>
+      <button class="sound-btn" onclick="playSound(this, '${v.word}')">🔊 发音</button>
+      <div class="meaning">${v.meaning}</div>
+      <div class="example">${v.example}<span class="vi">${v.example_vi}</span></div>
+    `;
+    grid.appendChild(card);
+  });
+  count.textContent = `共 ${list.length} 个生词`;
+}
+
+function playSound(btn, text) {
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'zh-CN';
+  const voices = speechSynthesis.getVoices().filter(v => v.lang === 'zh-CN');
+  if (voices.length > 0) utter.voice = voices[0];
+  btn.classList.add('playing');
+  utter.onend = () => btn.classList.remove('playing');
+  speechSynthesis.speak(utter);
+}
+
+function searchVocab() {
+  const query = searchInput.value.toLowerCase();
+  const filtered = vocabList.filter(v =>
+    v.word.includes(query) ||
+    v.pinyin.toLowerCase().includes(query) ||
+    v.meaning.toLowerCase().includes(query) ||
+    v.example.toLowerCase().includes(query) ||
+    v.example_vi.toLowerCase().includes(query)
+  );
+  renderVocab(filtered);
+}
+
+searchInput.addEventListener('input', searchVocab);
+document.addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === '/') {
+    e.preventDefault();
+    searchInput.focus();
+  }
+});
+
+window.speechSynthesis.onvoiceschanged = () => {}; // load zh-CN voices
+renderVocab(vocabList);
+</script>
+</body>
+</html>
