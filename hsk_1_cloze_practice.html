@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>完形填空练习 - 李月课文</title>
+  <style>
+    body { font-family: 'Noto Sans SC', sans-serif; line-height: 1.6; background-color: #f8f8f8; color: #333; padding: 20px; }
+    .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #444; }
+    .question { margin-bottom: 20px; }
+    .options label { display: block; margin-left: 20px; }
+    button { background: #0078d7; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+    button:hover { background: #005fa3; }
+    #result { font-weight: bold; margin-top: 20px; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>完形填空练习</h1>
+    <form id="quizForm">
+
+      <div class="question">
+        1. 李月是（ ）人。
+        <div class="options">
+          <label><input type="radio" name="q1" value="A"> 中国</label>
+          <label><input type="radio" name="q1" value="B"> 美国</label>
+          <label><input type="radio" name="q1" value="C"> 日本</label>
+          <label><input type="radio" name="q1" value="D"> 韩国</label>
+        </div>
+      </div>
+
+      <div class="question">
+        2. 她是（ ）。
+        <div class="options">
+          <label><input type="radio" name="q2" value="A"> 老师</label>
+          <label><input type="radio" name="q2" value="B"> 医生</label>
+          <label><input type="radio" name="q2" value="C"> 学生</label>
+          <label><input type="radio" name="q2" value="D"> 朋友</label>
+        </div>
+      </div>
+
+      <div class="question">
+        3. 她的同学是（ ）人。
+        <div class="options">
+          <label><input type="radio" name="q3" value="A"> 中国</label>
+          <label><input type="radio" name="q3" value="B"> 美国</label>
+          <label><input type="radio" name="q3" value="C"> 日本</label>
+          <label><input type="radio" name="q3" value="D"> 英国</label>
+        </div>
+      </div>
+
+      <div class="question">
+        4. 同学会说（ ）。
+        <div class="options">
+          <label><input type="radio" name="q4" value="A"> 英语</label>
+          <label><input type="radio" name="q4" value="B"> 汉语</label>
+          <label><input type="radio" name="q4" value="C"> 日语</label>
+          <label><input type="radio" name="q4" value="D"> 法语</label>
+        </div>
+      </div>
+
+      <div class="question">
+        5. 这本书是她（ ）的。
+        <div class="options">
+          <label><input type="radio" name="q5" value="A"> 爸爸</label>
+          <label><input type="radio" name="q5" value="B"> 妈妈</label>
+          <label><input type="radio" name="q5" value="C"> 朋友</label>
+          <label><input type="radio" name="q5" value="D"> 老师</label>
+        </div>
+      </div>
+
+      <div class="question">
+        6. 李月家有（ ）口人。
+        <div class="options">
+          <label><input type="radio" name="q6" value="A"> 一</label>
+          <label><input type="radio" name="q6" value="B"> 二</label>
+          <label><input type="radio" name="q6" value="C"> 三</label>
+          <label><input type="radio" name="q6" value="D"> 四</label>
+        </div>
+      </div>
+
+      <div class="question">
+        7. 她的女儿今年（ ）岁了。
+        <div class="options">
+          <label><input type="radio" name="q7" value="A"> 三</label>
+          <label><input type="radio" name="q7" value="B"> 四</label>
+          <label><input type="radio" name="q7" value="C"> 五</label>
+          <label><input type="radio" name="q7" value="D"> 六</label>
+        </div>
+      </div>
+
+      <div class="question">
+        8. 她会做（ ）菜。
+        <div class="options">
+          <label><input type="radio" name="q8" value="A"> 中国</label>
+          <label><input type="radio" name="q8" value="B"> 美国</label>
+          <label><input type="radio" name="q8" value="C"> 日本</label>
+          <label><input type="radio" name="q8" value="D"> 韩国</label>
+        </div>
+      </div>
+
+      <div class="question">
+        9. 她和同学写（ ）。
+        <div class="options">
+          <label><input type="radio" name="q9" value="A"> 汉字</label>
+          <label><input type="radio" name="q9" value="B"> 英文</label>
+          <label><input type="radio" name="q9" value="C"> 数字</label>
+          <label><input type="radio" name="q9" value="D"> 拼音</label>
+        </div>
+      </div>
+
+      <div class="question">
+        10. 她们最后说：“（ ）！”
+        <div class="options">
+          <label><input type="radio" name="q10" value="A"> 谢谢</label>
+          <label><input type="radio" name="q10" value="B"> 再见</label>
+          <label><input type="radio" name="q10" value="C"> 不客气</label>
+          <label><input type="radio" name="q10" value="D"> 对不起</label>
+        </div>
+      </div>
+
+      <div style="text-align:center;">
+        <button type="button" onclick="checkAnswers()">提交答案</button>
+      </div>
+
+      <div id="result"></div>
+    </form>
+  </div>
+
+  <script>
+    const correctAnswers = {
+      q1: 'A', q2: 'C', q3: 'B', q4: 'B', q5: 'C',
+      q6: 'C', q7: 'C', q8: 'A', q9: 'A', q10: 'B'
+    };
+
+    function checkAnswers() {
+      let score = 0;
+      for (const [key, value] of Object.entries(correctAnswers)) {
+        const selected = document.querySelector(`input[name="${key}"]:checked`);
+        if (selected && selected.value === value) score++;
+      }
+      document.getElementById('result').innerText = `你的得分是：${score} / 10`;
+    }
+  </script>
+</body>
+</html>
