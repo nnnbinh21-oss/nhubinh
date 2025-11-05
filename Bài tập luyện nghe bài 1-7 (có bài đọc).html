@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汉语听力练习</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .audio-player {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        audio {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .speed-control {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .speed-control label {
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .speed-control select {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .dialog-preview {
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        
+        .speaker {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        .speaker-a {
+            color: #e91e63;
+        }
+        
+        .speaker-b {
+            color: #2196f3;
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .question-container:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .question-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .question-text {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        
+        .option {
+            padding: 12px 15px;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option:hover {
+            background-color: #f0f7ff;
+            border-color: #3498db;
+        }
+        
+        .option.selected {
+            background-color: #e1f0fa;
+            border-color: #3498db;
+        }
+        
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        
+        .submit-btn {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .result.success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        
+        .result.failure {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .score {
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+        
+        .explanation {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .question-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>汉语听力练习</h1>
+            <p>请听音频并回答以下问题</p>
+        </header>
+        
+        <div class="audio-player">
+            <audio id="audio-player" controls>
+                <source src="1.wav" type="audio/wav">
+                您的浏览器不支持音频播放功能。
+            </audio>
+            <div class="speed-control">
+                <label for="playback-speed">播放速度:</label>
+                <select id="playback-speed">
+                    <option value="0.5">0.5x (慢速)</option>
+                    <option value="0.75">0.75x (较慢)</option>
+                    <option value="1" selected>1x (正常)</option>
+                    <option value="1.25">1.25x (较快)</option>
+                    <option value="1.5">1.5x (快速)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="dialog-preview">
+            <p><span class="speaker speaker-a">A(女)</span>: 你好！请问你是中国人吗？</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 你好！我不是中国人，我是美国人。你呢？</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 我是学生，我叫李月。你叫什么名字？</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 我叫大卫。你会说汉语吗？</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 我会说汉语。你的汉语很好！</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 谢谢！</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 不客气。你今天去学校吗？</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 去，今天星期三，我去学校看书。你呢?</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 我星期一、二、三不去学校，明天我去学校。你家有几口人？</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 我家有三口人：爸爸、妈妈和我。你呢？</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 我家有四口人，我有一个女儿。她今年五岁了。</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 她可爱吗？</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 她很可爱，会写汉字，也会说"谢谢""再见"。</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 真棒！你会做中国菜吗？</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 我会做，中国菜很好吃。</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 对，我很喜欢吃中国菜。</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 有时间，我请你去我家吃。</p>
+            <p><span class="speaker speaker-b">B(男)</span>: 好。对不起，我要去上课了。</p>
+            <p><span class="speaker speaker-a">A(女)</span>: 没关系，再见！</p>
+        </div>
+        
+        <div id="quiz-container">
+            <!-- 问题将通过JavaScript动态生成 -->
+        </div>
+        
+        <button id="submit-btn" class="submit-btn">提交答案</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // 问题数据
+        const questions = [
+            {
+                question: "对话中，B是哪国人？",
+                options: [
+                    "A. 中国人",
+                    "B. 美国人",
+                    "C. 日本人",
+                    "D. 英国人"
+                ],
+                correctAnswer: 1,
+                explanation: "B明确表示：'我不是中国人，我是美国人。'"
+            },
+            {
+                question: "A(女)叫什么名字？",
+                options: [
+                    "A. 大卫",
+                    "B. 李月",
+                    "C. 王明",
+                    "D. 张华"
+                ],
+                correctAnswer: 1,
+                explanation: "A自我介绍说：'我是学生，我叫李月。'"
+            },
+            {
+                question: "B(男)的汉语水平如何？",
+                options: [
+                    "A. 很差",
+                    "B. 一般",
+                    "C. 很好",
+                    "D. 不会说汉语"
+                ],
+                correctAnswer: 2,
+                explanation: "A称赞B：'你的汉语很好！'"
+            },
+            {
+                question: "今天是星期几？",
+                options: [
+                    "A. 星期一",
+                    "B. 星期二",
+                    "C. 星期三",
+                    "D. 星期四"
+                ],
+                correctAnswer: 2,
+                explanation: "B说：'今天星期三，我去学校看书。'"
+            },
+            {
+                question: "A(女)星期几去学校？",
+                options: [
+                    "A. 星期一、二、三",
+                    "B. 星期二、三、四",
+                    "C. 星期三、四、五",
+                    "D. 星期四、五、六"
+                ],
+                correctAnswer: 3,
+                explanation: "A说：'我星期一、二、三不去学校，明天我去学校。'明天是星期四，所以A星期四去学校。"
+            },
+            {
+                question: "B(男)家有几口人？",
+                options: [
+                    "A. 两口人",
+                    "B. 三口人",
+                    "C. 四口人",
+                    "D. 五口人"
+                ],
+                correctAnswer: 1,
+                explanation: "B说：'我家有三口人：爸爸、妈妈和我。'"
+            },
+            {
+                question: "A(女)的女儿会做什么？",
+                options: [
+                    "A. 会写汉字，会说'谢谢''再见'",
+                    "B. 会做中国菜",
+                    "C. 会看书",
+                    "D. 会唱歌"
+                ],
+                correctAnswer: 0,
+                explanation: "A说：'她很可爱，会写汉字，也会说'谢谢''再见'。'"
+            },
+            {
+                question: "A(女)会做什么中国相关的事情？",
+                options: [
+                    "A. 会说日语",
+                    "B. 会做中国菜",
+                    "C. 会唱中国歌",
+                    "D. 会写中国诗"
+                ],
+                correctAnswer: 1,
+                explanation: "A说：'我会做，中国菜很好吃。'"
+            },
+            {
+                question: "B(男)为什么需要离开？",
+                options: [
+                    "A. 要去吃饭",
+                    "B. 要去上课",
+                    "C. 要回家",
+                    "D. 要买东西"
+                ],
+                correctAnswer: 1,
+                explanation: "B说：'对不起，我要去上课了。'"
+            },
+            {
+                question: "A(女)邀请B(男)做什么？",
+                options: [
+                    "A. 去学校",
+                    "B. 去公园",
+                    "C. 去A家吃中国菜",
+                    "D. 去看电影"
+                ],
+                correctAnswer: 2,
+                explanation: "A说：'有时间，我请你去我家吃。'"
+            }
+        ];
+
+        // 初始化测验
+        document.addEventListener('DOMContentLoaded', function() {
+            const quizContainer = document.getElementById('quiz-container');
+            const submitButton = document.getElementById('submit-btn');
+            const resultContainer = document.getElementById('result');
+            const audioPlayer = document.getElementById('audio-player');
+            const speedControl = document.getElementById('playback-speed');
+            
+            // 设置默认播放速度为慢速
+            audioPlayer.playbackRate = 0.75;
+            speedControl.value = 0.75;
+            
+            // 播放速度控制
+            speedControl.addEventListener('change', function() {
+                audioPlayer.playbackRate = parseFloat(this.value);
+            });
+            
+            // 生成问题
+            questions.forEach((q, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question-container';
+                
+                const questionHTML = `
+                    <div class="question-number">问题 ${index + 1}</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((option, optionIndex) => `
+                            <div class="option" data-index="${optionIndex}">${option}</div>
+                        `).join('')}
+                    </div>
+                    <div class="explanation" style="display: none;">${q.explanation}</div>
+                `;
+                
+                questionElement.innerHTML = questionHTML;
+                quizContainer.appendChild(questionElement);
+                
+                // 添加选项点击事件
+                const options = questionElement.querySelectorAll('.option');
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        // 移除同一问题中其他选项的选中状态
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        // 标记当前选项为选中
+                        this.classList.add('selected');
+                    });
+                });
+            });
+            
+            // 提交按钮事件
+            submitButton.addEventListener('click', function() {
+                let score = 0;
+                const questionContainers = document.querySelectorAll('.question-container');
+                
+                questionContainers.forEach((container, index) => {
+                    const selectedOption = container.querySelector('.option.selected');
+                    const explanation = container.querySelector('.explanation');
+                    
+                    if (selectedOption) {
+                        const selectedIndex = parseInt(selectedOption.getAttribute('data-index'));
+                        const correctIndex = questions[index].correctAnswer;
+                        
+                        // 显示正确答案和解释
+                        explanation.style.display = 'block';
+                        
+                        // 标记正确/错误
+                        if (selectedIndex === correctIndex) {
+                            selectedOption.classList.add('correct');
+                            score++;
+                        } else {
+                            selectedOption.classList.add('incorrect');
+                            // 标记正确答案
+                            const correctOption = container.querySelector(`.option[data-index="${correctIndex}"]`);
+                            correctOption.classList.add('correct');
+                        }
+                    }
+                });
+                
+                // 显示结果
+                const percentage = (score / questions.length) * 100;
+                resultContainer.textContent = `您的得分: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                resultContainer.className = percentage >= 70 ? 'result success' : 'result failure';
+                
+                // 滚动到结果
+                resultContainer.scrollIntoView({ behavior: 'smooth' });
+                
+                // 禁用提交按钮
+                submitButton.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>
